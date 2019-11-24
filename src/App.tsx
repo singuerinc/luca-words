@@ -1,9 +1,7 @@
 import * as React from "react";
 import { InfoButton } from "./components/buttons/InfoButton";
-import { ThemeButton } from "./components/buttons/ThemeButton";
-
 import { ReloadButton } from "./components/buttons/ReloadButton";
-import { SmallWord } from "./components/SmallWord";
+import { ThemeButton } from "./components/buttons/ThemeButton";
 import { Word } from "./components/Word";
 import { WordCounter } from "./components/WordCounter";
 import {
@@ -18,9 +16,7 @@ import {
   incrementTheme,
   incrementWordCount,
   updateDictionary,
-  updateWordInEnglish,
-  updateWordInSpanish,
-  updateWordInSwedish
+  updateWordInEnglish
 } from "./utils/store";
 import { words as defaultDictionary } from "./utils/words";
 
@@ -40,8 +36,6 @@ interface IState {
   words: string[][];
   wordCount: number;
   wordInEnglish: string | null;
-  wordInSwedish: string | null;
-  wordInSpanish: string | null;
 }
 
 class App extends React.Component<{}, IState> {
@@ -50,11 +44,12 @@ class App extends React.Component<{}, IState> {
 
     window.addEventListener("keydown", onSpacePress(this.load));
 
-    const dictionary: string[][] = loadDictionary(
-      localStorage,
-      LOCAL_STORAGE_WORDS,
-      defaultDictionary
-    );
+    // const dictionary: string[][] = loadDictionary(
+    //   localStorage,
+    //   LOCAL_STORAGE_WORDS,
+    //   defaultDictionary
+    // );
+    const dictionary: string[][] = defaultDictionary;
     saveDictionary(dictionary);
 
     const theme = loadTheme(localStorage, LOCAL_STORAGE_THEME);
@@ -66,8 +61,6 @@ class App extends React.Component<{}, IState> {
       theme,
       wordCount,
       wordInEnglish: null,
-      wordInSwedish: null,
-      wordInSpanish: null,
       words: dictionary
     };
   }
@@ -77,24 +70,13 @@ class App extends React.Component<{}, IState> {
   }
 
   public render() {
-    const {
-      wordCount,
-      wordInEnglish,
-      wordInSwedish,
-      wordInSpanish,
-      theme
-    } = this.state;
+    const { wordCount, wordInEnglish, theme } = this.state;
 
-    if (wordInEnglish && wordInSpanish && wordInSwedish) {
+    if (wordInEnglish) {
       return (
         <div className={`app-container theme-${theme}`}>
           <div className="word-container">
-            <Word word={wordInSpanish} />
-            <div className="small-words-container">
-              <SmallWord word={wordInEnglish} />
-              <span className="small">/</span>
-              <SmallWord word={wordInSwedish} />
-            </div>
+            <Word word={wordInEnglish} />
             <WordCounter counter={wordCount} />
           </div>
           <ul className="settings">
@@ -126,14 +108,9 @@ class App extends React.Component<{}, IState> {
   };
 
   public load = () => {
-    const [
-      [wordInSwedish, wordInEnglish, wordInSpanish],
-      ...dictionary
-    ] = this.state.words;
+    const [[wordInEnglish], ...dictionary] = this.state.words;
 
     this.setState(updateWordInEnglish(wordInEnglish));
-    this.setState(updateWordInSpanish(wordInSpanish));
-    this.setState(updateWordInSwedish(wordInSwedish));
     this.setState(incrementWordCount, () => {
       const { wordCount } = this.state;
 
