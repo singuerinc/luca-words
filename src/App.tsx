@@ -116,7 +116,7 @@ class App extends React.Component<{}, IState> {
   }
 
   private info = () => {
-    window.open("https://github.com/singuerinc/spanish-wotd");
+    window.open("https://github.com/singuerinc/luca-words");
   };
 
   private changeTheme = () => {
